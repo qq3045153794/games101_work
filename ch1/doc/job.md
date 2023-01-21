@@ -257,7 +257,13 @@ void rst::rasterizer::draw_line(Eigen::Vector3f begin, Eigen::Vector3f end)
 }
 ```
 
+## 引用
 
+[计算OpenGL投影矩阵](http://www.songho.ca/opengl/gl_projectionmatrix.html)
+
+[作业一详解](https://zhuanlan.zhihu.com/p/361156478)
+
+[Bresenham 直线算法](https://zhuanlan.zhihu.com/p/106155534)
 
 
 
