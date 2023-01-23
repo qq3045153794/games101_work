@@ -58,7 +58,7 @@ static bool insideTriangle(int x, int y, const Vector3f* _v)
 
     // std::cout << "val : " << val << std::endl;
 
-    return val.z() <=  0;
+    return val.z() <  0;
 }
 
 static std::tuple<float, float, float> computeBarycentric2D(float x, float y, const Vector3f* v)
@@ -137,16 +137,36 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     Vector3f line_b(t.v[2] - t.v[1]);
     Vector3f line_c(t.v[0] - t.v[2]);
 
-
+    int dx[] = {0, 0, 1, 1};
+    int dy[] = {0, 1, 0, 1};
     uint32_t n_inside = 0;
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
 
-         bool is_inside_a = insideTriangle(j - t.v[0].x(), i - t.v[0].y(), &line_a);
-         bool is_inside_b = insideTriangle(j - t.v[1].x(), i - t.v[1].y(), &line_b);
-         bool is_inside_c = insideTriangle(j - t.v[2].x(), i - t.v[2].y(), &line_c);
+         // bool is_inside_a = insideTriangle(j - t.v[0].x(), i - t.v[0].y(), &line_a);
+         // bool is_inside_b = insideTriangle(j - t.v[1].x(), i - t.v[1].y(), &line_b);
+         // bool is_inside_c = insideTriangle(j - t.v[2].x(), i - t.v[2].y(), &line_c);
 
-         if((is_inside_a && is_inside_b && is_inside_c) || (!is_inside_a && !is_inside_b && !is_inside_c)) {
+        int count = 0;
+
+         for (int k = 0; k < 4; k++) {
+           int sx = j + dx[k];
+           int sy = i + dy[k];
+
+           bool is_inside_a = insideTriangle(sx - t.v[0].x(), sy - t.v[0].y(), &line_a);
+           bool is_inside_b = insideTriangle(sx - t.v[1].x(), sy - t.v[1].y(), &line_b);
+           bool is_inside_c = insideTriangle(sx - t.v[2].x(), sy - t.v[2].y(), &line_c);
+           if((is_inside_a && is_inside_b && is_inside_c) || (!is_inside_a && !is_inside_b && !is_inside_c)) {
+
+              auto[alpha, beta, gamma] = computeBarycentric2D(j, i, t.v);
+              float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+              float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+              z_interpolated *= w_reciprocal;
+              count++;
+           }
+         }
+
+         if(count) {
 
             auto[alpha, beta, gamma] = computeBarycentric2D(j, i, t.v);
             float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
@@ -155,7 +175,8 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
 
             if (z_interpolated <= depth_buf[get_index(j, i)]) {
                depth_buf[get_index(j, i)] = z_interpolated;
-               set_pixel(Vector3f(j, i, 0), Vector3f(t.color[0].x() * 255, t.color[0].y() * 255, t.color[0].z() * 255));
+               auto col = t.getColor() * count / 4.0;
+               set_pixel(Vector3f(j, i, 0), col);
             }
          }
       }
