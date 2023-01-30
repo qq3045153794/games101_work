@@ -295,7 +295,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     int min_y = std::min({ v[0].y(), v[1].y(), v[2].y() });
     int max_y = std::max({ v[0].y(), v[1].y(), v[2].y() });
 
-    std::cout << "rasterize" << std::endl;
 
     int pixel = 0;
 
@@ -351,7 +350,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 
     std::cout <<"pixel nums : " << pixel << std::endl;
 
-    std::cout << "end rasterize" << std::endl;
 
 
 
