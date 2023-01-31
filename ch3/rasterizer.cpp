@@ -285,7 +285,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 
     auto v = t.toVector4();
 
-
     Vector4f line_a(t.v[1] - t.v[0]);
     Vector4f line_b(t.v[2] - t.v[1]);
     Vector4f line_c(t.v[0] - t.v[2]);
@@ -295,18 +294,10 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     int min_y = std::min({ v[0].y(), v[1].y(), v[2].y() });
     int max_y = std::max({ v[0].y(), v[1].y(), v[2].y() });
 
-
     int pixel = 0;
 
     for (int i = min_y; i <= max_y; i++) {
       for (int j = min_x; j <= max_x; j++) {
-
-
-
-        // bool is_inside_a = insideTriangle(j - t.v[0].x(), i - t.v[0].y(), &line_a);
-        // bool is_inside_b = insideTriangle(j - t.v[1].x(), i - t.v[1].y(), &line_b);
-        // bool is_inside_c = insideTriangle(j - t.v[2].x(), i - t.v[2].y(), &line_c);
-
 
         if(insideTriangle(j, i, t.v)) {
 
