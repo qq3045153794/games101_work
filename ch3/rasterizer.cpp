@@ -311,19 +311,22 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 // 插值颜色
                 auto col = t.color;
                 // Vector3f colp = alpha * col[0] + beta * col[1] + gamma * col[2];
-                Vector3f colp = interpolate(alpha,beta,gamma,t.color[0],t.color[1],t.color[2], 1);
+                Vector3f colp = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1);
                 // 插值法向量
 
                 auto nol = t.normal;
-                Vector3f nolp = alpha * nol[0] + beta * nol[1] + gamma * nol[2];
-
+                // Vector3f nolp = alpha * nol[0] + beta * nol[1] + gamma * nol[2];
+                Vector3f nolp = interpolate(alpha, beta, gamma, nol[0], nol[1], nol[2], 1);
 
                 // 插值纹理颜色
 
                 auto uv = t.tex_coords;
-                Vector2f uvp = alpha * uv[0] + beta * uv[1] + gamma * uv[2];
+                // Vector2f uvp = alpha * uv[0] + beta * uv[1] + gamma * uv[2];
+                Vector2f uvp = interpolate(alpha, beta, gamma, uv[0], uv[1], uv[2], 1);
 
-                auto viewp = alpha * view_pos[0] + beta * view_pos[1] + gamma * view_pos[2];
+                // auto viewp = alpha * view_pos[0] + beta * view_pos[1] + gamma * view_pos[2];
+                auto viewp = interpolate(alpha, beta, gamma, view_pos[0], view_pos[1], view_pos[2], 1);
+
 
                 fragment_shader_payload payload(colp, nolp.normalized(), uvp, texture ? &*texture : nullptr);
                 payload.view_pos = viewp;
